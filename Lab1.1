@@ -1,0 +1,19 @@
+// Exercise 1.1
+const int LED_PIN = 6;    // D6
+const int POT_PIN = A1;   // A1
+
+void setup() {
+  pinMode(LED_PIN, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  digitalWrite(LED_PIN, HIGH);  // ON
+  delay(500);
+  digitalWrite(LED_PIN, LOW);   // OFF
+  delay(500);
+
+  int val = analogRead(POT_PIN); // reads 0..4095 on SAMD21
+  Serial.println(val);           // print pot value once per loop / second
+  delay(0); // already waited 1s across the two 500ms delays
+}
