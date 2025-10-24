@@ -1,0 +1,76 @@
+void setup() {
+  // Initialize serial communication at 9600 baud rate
+  Serial.begin(9600);
+  // Wait for serial port to connect (needed for some boards)
+  while (!Serial);
+  // Print instructions to user
+  Serial.println("Enter calculation (e.g. 8 * 5):");
+}
+
+void loop() {
+  // Check if data is available to read from serial
+  if (Serial.available()) {
+    // Read the incoming data until newline character
+    String input = Serial.readStringUntil('\n');
+    // Remove any leading/trailing whitespace
+    input.trim();
+
+    // Find the position of the operator in the input string
+    int opIndex = -1;
+    char op = 0;
+    // Define possible operators
+    const char ops[] = "+-*/";
+    // Loop through each operator to find which one is in the input
+    for (int i = 0; i < 4; i++) {
+      int idx = input.indexOf(ops[i]);
+      // If operator found and not at start of string
+      if (idx > 0) { 
+        opIndex = idx; 
+        op = ops[i]; 
+        break; 
+      }
+    }
+
+    // If no operator was found, show error message
+    if (opIndex == -1) {
+      Serial.println("Bad input. Use: number op number (e.g. 3 + 4)");
+      return;
+    }
+
+    // Split input into left and right parts around the operator
+    String left = input.substring(0, opIndex);
+    String right = input.substring(opIndex + 1);
+    // Remove whitespace from both parts
+    left.trim();
+    right.trim();
+
+    // Convert string parts to numbers
+    double a = left.toDouble();
+    double b = right.toDouble();
+
+    // Variable to store calculation result
+    double res = 0;
+
+    // Perform the appropriate calculation based on the operator
+    if (op == '+') res = a + b;
+    else if (op == '-') res = a - b;
+    else if (op == '*') res = a * b;
+    else if (op == '/') {
+      // Check for division by zero
+      if (b == 0) {
+        Serial.println("Error: divide by zero");
+        return;
+      }
+      res = a / b;
+    } else {
+      Serial.println("Unknown operator");
+      return;
+    }
+
+    // Display the result with 3 decimal places
+    Serial.print("Result: ");
+    Serial.println(res, 3);
+    // Prompt for next calculation
+    Serial.println("Enter another calculation:");
+  }
+}
