@@ -1,0 +1,36 @@
+#include <WiFiNINA.h>        // WiFiNINA library for MKR1010
+
+void setup() {
+  Serial.begin(9600);       // Start serial at 9600 baud
+  while (!Serial);          // Wait for serial connection (optional)
+}
+
+void loop() {
+  // Check if WiFi module present
+  if (WiFi.status() == WL_NO_MODULE) {
+    Serial.println("WiFi module not found!");
+    delay(30000);          // wait 30 seconds before trying again
+    return;
+  }
+
+  Serial.println("Scanning available networks...");
+  int numNetworks = WiFi.scanNetworks();       // scan and return number found
+
+  for (int i = 0; i < numNetworks; i++) {
+    Serial.print("Network: ");
+    Serial.print(WiFi.SSID(i));
+    Serial.print(" | Signal Strength: ");
+    Serial.print(WiFi.RSSI(i));               // RSSI in dBm
+    Serial.print(" dBm | Encryption: ");
+    Serial.println(WiFi.encryptionType(i));   // encryption type (integer)
+  }
+
+  Serial.print("Total networks: ");
+  Serial.println(numNetworks);
+
+  delay(30000); // wait 30 seconds before rescanning
+}
+
+//errors were an incorrect for loop index, 
+//multiple delays instead of one 30s delay, 
+//and missing handling for WL_NO_MODULE
